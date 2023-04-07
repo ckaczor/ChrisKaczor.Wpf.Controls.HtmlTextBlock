@@ -12,6 +12,7 @@
 		<Description>A WPF control that extends the base TextBlock control with rudimentary support for some basic HTML formatting.</Description>
 		<PackageId>ChrisKaczor.Wpf.Controls.HtmlTextBlock</PackageId>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<AssemblyName>ChrisKaczor.Wpf.Controls.HtmlTextBlock</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Update="README.md">
