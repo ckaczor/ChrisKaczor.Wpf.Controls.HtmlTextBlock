@@ -21,13 +21,10 @@ namespace ChrisKaczor.Wpf.Controls
             // Add a root tag so the parser is happy
             text = string.Format(CultureInfo.InvariantCulture, "<body>{0}</body>", text);
 
-            // Normalize line endings
-            text = text.Replace("\r\n", "\n");
-
             // Create an XML document and load it with the text
             var xmlDocument = new XmlDocument
             {
-                PreserveWhitespace = true
+                PreserveWhitespace = false
             };
             xmlDocument.LoadXml(text);
 
@@ -55,15 +52,10 @@ namespace ChrisKaczor.Wpf.Controls
                 {
                     case "#WHITESPACE":
                     case "#TEXT":
-
-                        // Split the fragment and the line endings
-                        var lines = xmlNode.Value!.Split('\n');
-
-                        var firstLine = true;
-
-                        foreach (var line in lines)
                         {
-                            var textLine = (firstLine ? textLines[^1] : new TextLine());
+                            var line = xmlNode.Value!;
+
+                            var textLine = textLines[^1];
 
                             // Create a new fragment and fill the style information
                             var textFragment = new TextFragment(_parentControl)
@@ -79,13 +71,19 @@ namespace ChrisKaczor.Wpf.Controls
                             // Add the fragment to the list
                             textLine.FragmentList.Add(textFragment);
 
-                            if (!firstLine)
-                                textLines.Add(textLine);
-
-                            firstLine = false;
+                            break;
                         }
 
-                        break;
+                    case "BR":
+                        {
+                            var textLine = new TextLine();
+
+                            textLine.FragmentList.Add(new TextFragment(_parentControl) { Text = Environment.NewLine });
+
+                            textLines.Add(textLine);
+
+                            break;
+                        }
 
                     case "EM":
                     case "B":
@@ -124,7 +122,7 @@ namespace ChrisKaczor.Wpf.Controls
                                     break;
 
                                 case "COLOR":
-                                    style.Color = (Brush?) new BrushConverter().ConvertFromString(attribute.Value);
+                                    style.Color = (Brush?)new BrushConverter().ConvertFromString(attribute.Value);
                                     break;
                             }
                         }
